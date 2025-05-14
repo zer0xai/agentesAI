@@ -1,0 +1,22 @@
+# article-agent
+# Dependências principais
+requests>=2.31.0,<3.0.0
+openai>=1.12.0,<2.0.0
+
+# Tradutores (escolha apenas um)
+deep-translator==1.11.1  # Alternativa moderna
+
+# Utilitários
+python-dotenv>=1.0.0
+python-socketio>=5.9.0,<6.0.0
+tqdm>=4.66.1,<5.0.0
+
+# Dependências do Ollama (se necessário)
+ollama>=0.1.0
+
+# video-editor-agent
+opencv-python
+numpy
+scipy
+pydub
+moviepy
