@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
 """
 Script Didático: Gerador de Artigos com Ollama
-Autor: Seu Nome
-Data: 2024
+Autor: Zer0X
+Data: 2025
 """
 
 import requests
@@ -146,7 +145,10 @@ def main():
     print("="*50 + "\n")
     
     # Pede o tema ao usuário
-    prompt = input("📝 Sobre o que você quer o artigo? ").strip()
+    try:
+        prompt = input("? Sobre o que você quer o artigo? ").strip()
+    except EOFError:
+        prompt = "artigo padrão"
     
     if not prompt:
         print("❌ Por favor, digite um tema válido.")

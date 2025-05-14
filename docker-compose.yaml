@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  ollama-server:
+    image: ollama/ollama:latest
+    container_name: ollama-server
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./models:/models  # Para modelos customizados
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_MODELS=/root/.ollama/models
+      - OLLAMA_AUTO_UPDATE=1  # Ativa auto-atualização
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 1h  # Verifica a cada hora
+      timeout: 5s
+      retries: 5
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+
+  article-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - OLLAMA_MODEL=llama
+    container_name: article-agent
+    volumes:
+      - article_data:/articles
+      - ./src:/app
+      - ./update_model.sh:/usr/local/bin/update_model.sh:ro  # Adicione esta linha
+    environment:
+      - OLLAMA_HOST=ollama-server:11434
+      - AUTO_UPDATE_CHECK=1
+    depends_on:
+      ollama-server:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+
+volumes:
+  ollama_data:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+  article_data:
+    driver: local
+
+# Configuração de rede otimizada
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
